@@ -4,6 +4,9 @@
 #include "vector.h"
 #include "config.h"
 
+#define n NUMENTITIES
+#define BLOCK_SIZE 256
+
 // CUDA kernel for calculating pairwise accelerations
 __global__ void calculate_accelerations(vector3 *dPos, vector3 *dAccels, double *dMass) {
     int i = threadIdx.x + blockIdx.x * blockDim.x;
@@ -53,6 +56,7 @@ __global__ void calculate_velocities_positions(vector3 *dPos, vector3 *dVel, vec
 void compute(vector3 *hPos, vector3 *hVel, double *mass){
     // Allocate memory on device
     int numBlocks = (n + BLOCK_SIZE - 1) / BLOCK_SIZE;
+    dim3 threadsPerBlock(BLOCK_SIZE, BLOCK_SIZE);
     vector3 *dPos, *dVel, *dAccels;
     double *dMass;
     size_t size = NUMENTITIES * sizeof(vector3);
