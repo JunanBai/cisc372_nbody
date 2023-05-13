@@ -38,7 +38,7 @@ __global__ void calculate_accelerations(vector3 *dPos, vector3 *dAccels, double 
 __global__ void calculate_velocities_positions(vector3 *dPos, vector3 *dVel, double *dMass) {
     int i = threadIdx.x + blockIdx.x * blockDim.x;
     vector3 accel_sum = {0, 0, 0};
-
+    vector3 *dAccels;
     if (i < NUMENTITIES) {
         for (int j = 0; j < NUMENTITIES; ++j) {
             for (int k = 0; k < 3; ++k) {
