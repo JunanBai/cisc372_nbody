@@ -68,6 +68,9 @@ void compute() {
     vector3 *d_hPos, *d_hVel;
     vector3** d_accelVectors;
     vector3* d_accelSums;
+    hPos = (vector3*)malloc(sizeof(vector3)*NUMENTITIES);
+    hVel = (vector3*)malloc(sizeof(vector3)*NUMENTITIES);
+    mass = (double*)malloc(sizeof(double)*NUMENTITIES);
 
     cudaMalloc(&d_hPos, sizeof(vector3)*NUMENTITIES);
     cudaMalloc(&d_hVel, sizeof(vector3)*NUMENTITIES);
@@ -105,5 +108,8 @@ void compute() {
         cudaFree(accels[i]);
     }
     free(accels);
+    free(hPos);
+    free(hVel);
+    free(mass);
 }
 }
