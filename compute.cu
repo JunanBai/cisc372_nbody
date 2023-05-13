@@ -65,13 +65,14 @@ void callNewVelAndPos(vector3* zd_hVel, vector3* zd_hPos, vector3* zd_accelSums)
 
 void compute() {
     double* d_mass;
-    vector3 *d_pos, *d_vel, *d_force, *d_acc;
+    vector3 *d_hPos, *d_hVel;
     vector3** d_accelVectors;
     vector3* d_accelSums;
+
     cudaMalloc(&d_hPos, sizeof(vector3)*NUMENTITIES);
     cudaMalloc(&d_hVel, sizeof(vector3)*NUMENTITIES);
     cudaMalloc(&d_mass, sizeof(double)*NUMENTITIES);
-    cudaMalloc(&d_accelVectors, sizeof(vector3*)*NUMENTITIES);
+
     cudaMemcpy(d_hPos, hPos, sizeof(vector3)*NUMENTITIES, cudaMemcpyHostToDevice);
     cudaMemcpy(d_hVel, hVel, sizeof(vector3)*NUMENTITIES, cudaMemcpyHostToDevice);
     cudaMemcpy(d_mass, mass, sizeof(double)*NUMENTITIES, cudaMemcpyHostToDevice);
@@ -82,6 +83,7 @@ void compute() {
         cudaMalloc(&accels[i], sizeof(vector3)*NUMENTITIES);
     }
 
+    cudaMalloc(&d_accelVectors, sizeof(vector3*)*NUMENTITIES);
     cudaMemcpy(d_accelVectors, accels, sizeof(vector3*)*NUMENTITIES, cudaMemcpyHostToDevice);
 
     cudaMalloc(&d_accelSums, sizeof(vector3)*NUMENTITIES);
@@ -92,12 +94,16 @@ void compute() {
 
     cudaMemcpy(hPos, d_hPos, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
     cudaMemcpy(hVel, d_hVel, sizeof(vector3)*NUMENTITIES, cudaMemcpyDeviceToHost);
-    cudaFree(&d_hPos);
-    cudaFree(&d_hVel);
-    cudaFree(&d_mass);
-    cudaFree(&d_accelVectors);
-    cudaFree(&d_accelSums);
 
+    cudaFree(d_hPos);
+    cudaFree(d_hVel);
+    cudaFree(d_mass);
+    cudaFree(d_accelVectors);
+    cudaFree(d_accelSums);
+
+    for (int i=0;i<NUMENTITIES;i++) {
+        cudaFree(accels[i]);
+    }
     free(accels);
 }
-}
+
