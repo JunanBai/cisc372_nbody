@@ -1,0 +1,9 @@
+Script started on Fri 12 May 2023 09:05:54 PM EDT
+]0;jnbai@login00.darwin:~/cisc372_nbody[?1034h[(ea-cisc372:jnbai)@login00.darwin cisc372_nbody]$ make 
+nvcc -DDEBUG -c nbody.c 
+nvcc -DDEBUG -c compute.cu 
+nvcc -DDEBUG nbody.o compute.o -o nbody -lm
+]0;jnbai@login00.darwin:~/cisc372_nbody[(ea-cisc372:jnbai)@login00.darwin cisc372_nbody]$ exit
+exit
+
+Script done on Fri 12 May 2023 09:06:05 PM EDT
