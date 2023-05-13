@@ -106,4 +106,4 @@ void compute() {
     }
     free(accels);
 }
-
+}
