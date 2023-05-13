@@ -52,6 +52,7 @@ __global__ void calculate_velocities_positions(vector3 *dPos, vector3 *dVel, vec
 
 void compute(vector3 *hPos, vector3 *hVel, double *mass){
     // Allocate memory on device
+    int numBlocks = (n + BLOCK_SIZE - 1) / BLOCK_SIZE;
     vector3 *dPos, *dVel, *dAccels;
     double *dMass;
     size_t size = NUMENTITIES * sizeof(vector3);
@@ -63,4 +64,23 @@ void compute(vector3 *hPos, vector3 *hVel, double *mass){
     cudaMalloc(&dMass, sizeMass);
     cudaMalloc(&dAccels, sizeAccels);
 
-    // Copy data from host to
+    cudaMemcpy(dPos, hPos, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(dVel, hVel, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(dMass, mass, sizeMass, cudaMemcpyHostToDevice);
+
+    calculate_accelerations<<<numBlocks, threadsPerBlock>>>(dPos, dAccels, dMass);
+    cudaDeviceSynchronize();  // Wait for the GPU to finish before accessing on host
+
+    calculate_velocities_positions<<<numBlocks, threadsPerBlock>>>(dPos, dAccels, dMass);
+    cudaDeviceSynchronize();  
+
+    cudaMemcpy(hPos, dPos, size, cudaMemcpyDeviceToHost);
+    cudaMemcpy(hVel, dVel, size, cudaMemcpyDeviceToHost);
+
+    // Free device memory
+    cudaFree(dPos);
+    cudaFree(dVel);
+    cudaFree(dMass);
+    cudaFree(dAccels);
+}
+
