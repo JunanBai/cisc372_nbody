@@ -35,7 +35,7 @@ __global__ void calculate_accelerations(vector3 *dPos, vector3 *dAccels, double 
 }
 
 // CUDA kernel for calculating new velocities and positions
-__global__ void calculate_velocities_positions(vector3 *dPos, vector3 *dVel, vector3 *dAccels) {
+__global__ void calculate_velocities_positions(vector3 *dPos, vector3 *dVel, double *dMass) {
     int i = threadIdx.x + blockIdx.x * blockDim.x;
     vector3 accel_sum = {0, 0, 0};
 
@@ -75,7 +75,7 @@ void compute(vector3 *hPos, vector3 *hVel, double *mass){
     calculate_accelerations<<<numBlocks, threadsPerBlock>>>(dPos, dAccels, dMass);
     cudaDeviceSynchronize();  // Wait for the GPU to finish before accessing on host
 
-    calculate_velocities_positions<<<numBlocks, threadsPerBlock>>>(dPos, dAccels, dMass);
+    calculate_velocities_positions<<<numBlocks, threadsPerBlock>>>(dPos, dVel, dMass);
     cudaDeviceSynchronize();  
 
     cudaMemcpy(hPos, dPos, size, cudaMemcpyDeviceToHost);
