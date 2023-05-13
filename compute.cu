@@ -65,6 +65,7 @@ void callNewVelAndPos(vector3* zd_hVel, vector3* zd_hPos, vector3* zd_accelSums)
 
 void compute() {
     double* d_mass;
+    vector3 *d_pos, *d_vel, *d_force, *d_acc;
     vector3** d_accelVectors;
     vector3* d_accelSums;
     cudaMalloc(&d_hPos, sizeof(vector3)*NUMENTITIES);
